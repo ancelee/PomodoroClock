@@ -8,9 +8,9 @@
     "build": "vite build",
     "electron:dev": "concurrently -k \"vite\" \"npm run electron:start\"",
     "electron:start": "NODE_ENV=development electron .",
-    "electron:build": "vite build && electron-builder",
-    "electron:build:win": "vite build && electron-builder --win",
-    "electron:build:mac": "vite build && electron-builder --mac",
+    "electron:build": "npm run build && npm run electron:compile && electron-builder",
+    "electron:build:win": "npm run build && npm run electron:compile && electron-builder --win",
+    "electron:build:mac": "npm run build && npm run electron:compile && electron-builder --mac",
     "electron:compile": "tsc electron/main.ts --outDir electron --module commonjs --moduleResolution node --target es2020 --esModuleInterop true --allowSyntheticDefaultImports true --skipLibCheck true --ignoreConfig --ignoreDeprecations 6.0"
   },
   "repository": {
