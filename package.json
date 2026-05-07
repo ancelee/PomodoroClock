@@ -1,0 +1,73 @@
+{
+  "name": "pomodoroclock",
+  "version": "1.0.0",
+  "description": "番茄时钟 - 提升你的工作效率",
+  "main": "electron/main.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "electron:dev": "concurrently -k \"vite\" \"npm run electron:start\"",
+    "electron:start": "NODE_ENV=development electron .",
+    "electron:build": "vite build && electron-builder",
+    "electron:build:win": "vite build && electron-builder --win",
+    "electron:build:mac": "vite build && electron-builder --mac",
+    "electron:compile": "tsc electron/main.ts --outDir electron --module commonjs --moduleResolution node --target es2020 --esModuleInterop true --allowSyntheticDefaultImports true --skipLibCheck true --ignoreConfig --ignoreDeprecations 6.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ancelee/PomodoroClock.git"
+  },
+  "keywords": [
+    "pomodoro",
+    "clock",
+    "productivity"
+  ],
+  "author": "ancelee",
+  "license": "MIT",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/ancelee/PomodoroClock/issues"
+  },
+  "homepage": "https://github.com/ancelee/PomodoroClock#readme",
+  "dependencies": {
+    "@vitejs/plugin-vue": "^6.0.6",
+    "ant-design-vue": "^4.2.6",
+    "typescript": "^6.0.3",
+    "vite": "^8.0.10",
+    "vue": "^3.5.34"
+  },
+  "devDependencies": {
+    "@types/node": "^25.6.0",
+    "@vue/runtime-core": "^3.5.34",
+    "@vue/tsconfig": "^0.9.1",
+    "concurrently": "^9.1.2",
+    "electron": "^42.0.0",
+    "electron-builder": "^26.8.1",
+    "sass": "^1.99.0",
+    "ts-node": "^10.9.2"
+  },
+  "build": {
+    "appId": "com.ancelee.pomodoro",
+    "productName": "番茄时钟",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "dist/**/*",
+      "electron/**/*",
+      "public/**/*"
+    ],
+    "mac": {
+      "category": "public.app-category.productivity"
+    },
+    "win": {
+      "target": [
+        "nsis"
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true
+    }
+  }
+}
