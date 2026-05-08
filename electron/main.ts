@@ -1,49 +1,55 @@
 import { app, BrowserWindow, Menu, Tray, nativeImage } from 'electron'
-import { resolve } from 'path'
+import { join, dirname } from 'path'
+import { fileURLToPath } from 'url'
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = dirname(__filename)
 
 let mainWindow: BrowserWindow | null = null
 let tray: Tray | null = null
 
-const createWindow = () => {
+function createWindow() {
+  const iconPath = join(__dirname, '../public/icon.png')
   mainWindow = new BrowserWindow({
     width: 450,
-    height: 550,
+    height: 825,
     resizable: false,
     maximizable: false,
-    icon: resolve(__dirname, '../public/icon.png'),
+    icon: iconPath,
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false
     }
   })
 
-  if (process.env.NODE_ENV === 'development') {
-    mainWindow.loadURL('http://localhost:5173')
+  // 开发环境加载 Vite 服务器
+  if (process.env.VITE_DEV_SERVER_URL) {
+    mainWindow.loadURL(process.env.VITE_DEV_SERVER_URL)
     mainWindow.webContents.openDevTools()
   } else {
-    mainWindow.loadFile(resolve(__dirname, '../dist/index.html'))
+    // 生产环境
+    mainWindow.loadFile(join(__dirname, '../dist/index.html'))
   }
 
-  mainWindow.on('close', (event) => {
-    event.preventDefault()
-    mainWindow?.hide()
+  mainWindow.on('closed', () => {
+    mainWindow = null
   })
 }
 
-const createTray = () => {
-  const icon = nativeImage.createFromPath(resolve(__dirname, '../public/icon.png'))
-  tray = new Tray(icon)
-  
+function createTray() {
+  const iconPath = join(__dirname, '../public/icon.png')
+  tray = new Tray(nativeImage.createFromPath(iconPath))
+
   const contextMenu = Menu.buildFromTemplate([
     { label: '显示', click: () => mainWindow?.show() },
     { label: '退出', click: () => {
       app.quit()
     }}
   ])
-  
+
   tray.setToolTip('番茄时钟')
   tray.setContextMenu(contextMenu)
-  
+
   tray.on('click', () => {
     mainWindow?.show()
   })
@@ -52,7 +58,7 @@ const createTray = () => {
 app.whenReady().then(() => {
   createWindow()
   createTray()
-  
+
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {
       createWindow()
