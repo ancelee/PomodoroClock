@@ -120,6 +120,7 @@ const workMinutes = ref(25)
 const breakMinutes = ref(5)
 
 let timerInterval: ReturnType<typeof setInterval> | null = null
+let endTime: number = 0 // 倒计时结束的时间戳
 
 const totalSeconds = computed(() => {
   return currentMode.value === 'work' ? workMinutes.value * 60 : breakMinutes.value * 60
@@ -162,13 +163,27 @@ const toggleTimer = () => {
 }
 
 const startTimer = () => {
+  // 计算结束时间戳 = 当前时间 + 剩余秒数
+  endTime = Date.now() + remainingSeconds.value * 1000
+
+  // 立即更新一次剩余时间
+  updateRemainingTime()
+
   timerInterval = setInterval(() => {
-    if (remainingSeconds.value > 0) {
-      remainingSeconds.value--
-    } else {
-      handleTimerComplete()
-    }
+    updateRemainingTime()
   }, 1000)
+}
+
+const updateRemainingTime = () => {
+  const now = Date.now()
+  const diff = endTime - now
+
+  if (diff <= 0) {
+    remainingSeconds.value = 0
+    handleTimerComplete()
+  } else {
+    remainingSeconds.value = Math.ceil(diff / 1000)
+  }
 }
 
 const stopTimer = () => {
